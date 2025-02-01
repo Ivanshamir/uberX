@@ -4,6 +4,7 @@ import { connectDB, connectRedis, connectRabbitMQ } from './config/database';
 import userRoutes from './routes/userRoutes';
 import logger from './config/logger';
 import { setupPassengerQueue } from './exchange/PassengerEvent';
+import { setupDriverQueue } from './exchange/DriverEvent';
 
 dotenv.config();
 
@@ -21,6 +22,8 @@ const startServer = async () => {
     await connectRabbitMQ();
     // passanger queue
     await setupPassengerQueue(); // Add this line
+
+    await setupDriverQueue();
 
 
     const PORT = process.env.PORT || 3000;
