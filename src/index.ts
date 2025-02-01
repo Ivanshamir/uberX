@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { connectDB, connectRedis, connectRabbitMQ } from './config/database';
 import userRoutes from './routes/userRoutes';
 import logger from './config/logger';
+import { setupPassengerQueue } from './exchange/PassengerEvent';
 
 dotenv.config();
 
@@ -18,6 +19,9 @@ const startServer = async () => {
     await connectDB();
     await connectRedis();
     await connectRabbitMQ();
+    // passanger queue
+    await setupPassengerQueue(); // Add this line
+
 
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
