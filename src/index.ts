@@ -2,9 +2,11 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { connectDB, connectRedis, connectRabbitMQ } from './config/database';
 import userRoutes from './routes/userRoutes';
+import passengerRide from './routes/passengerRide';
 import logger from './config/logger';
 import { setupPassengerQueue } from './exchange/PassengerEvent';
 import { setupDriverQueue } from './exchange/DriverEvent';
+import { listenToDriverMatchingResponse } from './exchange/DriverMatchingEvent';
 
 dotenv.config();
 
@@ -13,6 +15,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use('/api/passenger-ride', passengerRide);
 
 // Connect to databases
 const startServer = async () => {
@@ -23,6 +26,7 @@ const startServer = async () => {
     // passanger queue
     await setupPassengerQueue(); // Add this line
     await setupDriverQueue();
+    await listenToDriverMatchingResponse();
 
 
     const PORT = process.env.PORT || 3000;
