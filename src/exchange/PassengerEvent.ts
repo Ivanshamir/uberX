@@ -9,7 +9,7 @@ export const setupPassengerQueue = async () => {
     const channel = await connection.createChannel();
 
     // Queue configuration
-    const exchange = process.env.EXCHANGE!;
+    const exchange = process.env.PASSENGER_EXCHANGE!;
     const queue = process.env.PASSENGER_QUEUE!;
     const routingKey = process.env.PASSENGER_ROUTING_KEY!;
 

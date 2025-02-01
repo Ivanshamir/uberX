@@ -22,7 +22,6 @@ const startServer = async () => {
     await connectRabbitMQ();
     // passanger queue
     await setupPassengerQueue(); // Add this line
-
     await setupDriverQueue();
 
 

@@ -10,7 +10,7 @@ export const setupDriverQueue = async () => {
     const channel = await connection.createChannel();
 
     // Queue configuration
-    const exchange = process.env.EXCHANGE!;
+    const exchange = process.env.DRIVER_EXCHANGE!;
     const queue = process.env.DRIVER_QUEUE!;
     const routingKey = process.env.DRIVER_ROUTING_KEY!;
 
@@ -22,7 +22,7 @@ export const setupDriverQueue = async () => {
     // Set prefetch to 1 to handle one message at a time
     channel.prefetch(1);
 
-    logger.info('RabbitMQ passenger consumer setup completed');
+    logger.info('RabbitMQ  consumer setup completed');
 
     // Consume messages
     await channel.consume(queue, async (msg) => {
@@ -32,12 +32,12 @@ export const setupDriverQueue = async () => {
         // Parse message content
         logger.info(`Received Driver data: ${msg.content.toString()}`);
         const driverData = JSON.parse(msg.content.toString());
-        logger.info(`Received passenger data: ${JSON.stringify(driverData)}`);
+        logger.info(`Received driver data: ${JSON.stringify(driverData)}`);
 
         // Save to MongoDB
-        const passenger = new Driver(driverData);
-        await passenger.save();
-        logger.info(`Saved passenger data with ID: ${passenger._id}`);
+        const driver = new Driver(driverData);
+        await driver.save();
+        logger.info(`Saved driver data with ID: ${driver._id}`);
 
         // Acknowledge the message
         channel.ack(msg);
@@ -52,7 +52,7 @@ export const setupDriverQueue = async () => {
     connection.on('close', () => {
       logger.error('RabbitMQ connection closed');
       // Attempt to reconnect after 5 seconds
-      setTimeout(() => setupPassengerQueue(), 5000);
+      setTimeout(() => setupDriverQueue(), 5000);
     });
 
     // Handle errors
@@ -63,6 +63,6 @@ export const setupDriverQueue = async () => {
   } catch (error) {
     logger.error('Error setting up RabbitMQ consumer:', error);
     // Attempt to reconnect after 5 seconds
-    setTimeout(() => setupPassengerQueue(), 5000);
+    setTimeout(() => setupDriverQueue(), 5000);
   }
 };
