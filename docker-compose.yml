@@ -1,0 +1,22 @@
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    # environment:
+      # - NODE_ENV=development
+      # - MONGODB_URI=mongodb://mongodb:27017/uber
+      # - REDIS_URI=redis://redis:6379
+      # - RABBITMQ_URI=amqp://rabbitmq:5672
+    networks:
+      - uber-network
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+networks:
+  uber-network:
+    driver: bridge

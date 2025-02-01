@@ -1,0 +1,35 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Source control
+.git
+.gitignore
+
+# Build output
+dist
+
+# Environment (will be copied explicitly in Dockerfile)
+.env.local
+.env.*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# IDE files
+.vscode
+.idea
+
+# Test files
+coverage
+*.test.ts
+
+# Misc
+.DS_Store
+README.md
+docker-compose.yml
+Dockerfile
+.dockerignore
