@@ -22,7 +22,7 @@ export const setupDriverQueue = async () => {
     // Set prefetch to 1 to handle one message at a time
     channel.prefetch(1);
 
-    logger.info('RabbitMQ  consumer setup completed');
+    logger.info('RabbitMQ driver consumer setup completed');
 
     // Consume messages
     await channel.consume(queue, async (msg) => {
