@@ -1,0 +1,10 @@
+export interface PassengerRideConfirmation {
+  passengerId: string;
+  pickupLocation: string;
+  pickupLatitude: number;
+  pickupLongitude: number;
+  destinationLocation: string;
+  destinationLatitude: number;
+  destinationLongitude: number;
+  expectedFare: number;
+}

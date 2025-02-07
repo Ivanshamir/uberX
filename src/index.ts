@@ -3,11 +3,14 @@ import dotenv from 'dotenv';
 import { createServer } from 'http';
 import { connectDB, connectRedis, connectRabbitMQ } from './config/database';
 import userRoutes from './routes/userRoutes';
+import passengerRide from './routes/passengerRide';
+import rideStatusRoutes from './routes/rideStatusRoutes';
 import logger from './config/logger';
 import { setupPassengerQueue } from './exchange/PassengerEvent';
 import { setupDriverQueue } from './exchange/DriverEvent';
 import { WebSocketService } from './services/WebSocketService';
 import { setupPriceConsumer } from './exchange/FareConsumeEvent';
+import { listenToDriverMatchingResponse } from './exchange/DriverMatchingEvent';
 
 dotenv.config();
 
@@ -20,6 +23,8 @@ const wsService = new WebSocketService(server);
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use('/api/passenger-ride', passengerRide);
+app.use('/api/ride_status', rideStatusRoutes);
 
 // Connect to databases
 const startServer = async () => {
@@ -31,6 +36,8 @@ const startServer = async () => {
     await setupPassengerQueue();
     await setupDriverQueue();
     // await setupPriceConsumer(wsService);
+    await listenToDriverMatchingResponse();
+
 
     const PORT = process.env.PORT || 3000;
     server.listen(PORT, () => {
