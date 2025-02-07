@@ -13,25 +13,101 @@ export const setupPassengerQueue = async () => {
     const queue = process.env.PASSENGER_QUEUE!;
     const routingKey = process.env.PASSENGER_ROUTING_KEY!;
 
-    // Assert exchange and queue
-    await channel.assertExchange(exchange, 'direct', { durable: true });
-    await channel.assertQueue(queue, { durable: true });
+    try {
+      // First try to check if exchange exists
+      await channel.checkExchange(exchange);
+      logger.info(`Exchange ${exchange} already exists`);
+    } catch (error) {
+      // If exchange doesn't exist, create it
+      await channel.assertExchange(exchange, 'direct', { 
+        durable: true,
+        autoDelete: false
+      });
+      logger.info(`Exchange ${exchange} created`);
+    }
+
+    // Assert queue (this is safe to call even if queue exists)
+    const queueResult = await channel.assertQueue(queue, { 
+      durable: true,
+      autoDelete: false
+    });
+    logger.info(`Queue ${queue} asserted with ${queueResult.messageCount} messages`);
+
+    // Bind queue to exchange (this is idempotent)
     await channel.bindQueue(queue, exchange, routingKey);
+    logger.info(`Queue ${queue} bound to exchange ${exchange} with routing key ${routingKey}`);
 
     // Set prefetch to 1 to handle one message at a time
     channel.prefetch(1);
-
-    logger.info('RabbitMQ passenger consumer setup completed');
 
     // Consume messages
     await channel.consume(queue, async (msg) => {
       if (!msg) return;
 
       try {
-        // Parse message content
-        logger.info(`Received passenger data: ${msg.content.toString()}`);
-        const passengerData = JSON.parse(msg.content.toString());
-        logger.info(`Received passenger data: ${JSON.stringify(passengerData)}`);
+        let passengerData;
+        const content = msg.content.toString();
+        
+        try {
+          // First try parsing once
+          passengerData = JSON.parse(content);
+          // If it's still a string, parse again
+          if (typeof passengerData === 'string') {
+            passengerData = JSON.parse(passengerData);
+          }
+        } catch (parseError) {
+          logger.error('Error parsing message:', parseError);
+          // Reject message without requeue if it's unparseable
+          channel.nack(msg, false, false);
+          return;
+        }
+
+        logger.info('Processing passenger data:', passengerData);
+
+        // Check for required fields
+        if (!passengerData.firstName || !passengerData.lastName || 
+          !passengerData.email || !passengerData.phone) {
+        logger.error('Missing required fields:', {
+          firstName: !passengerData.firstName,
+          lastName: !passengerData.lastName,
+          email: !passengerData.email,
+          phone: !passengerData.phone
+        });
+        channel.nack(msg, false, false);
+        return;
+      }
+
+      // First check if email exists
+      const existingPassenger = await Passenger.findOne({ email: passengerData.email });
+      
+      if (existingPassenger) {
+        logger.info(`Passenger with email ${passengerData.email} already exists. Updating record...`);
+        
+        // Update existing passenger
+        const updatedPassenger = await Passenger.findOneAndUpdate(
+          { email: passengerData.email },
+          {
+            $set: {
+              firstName: passengerData.firstName,
+              lastName: passengerData.lastName,
+              phone: passengerData.phone,
+              identificationType: passengerData.identificationType || existingPassenger.identificationType,
+              identificationNumber: passengerData.identificationNumber || existingPassenger.identificationNumber,
+              identificationDocuments: passengerData.identificationDocuments || existingPassenger.identificationDocuments,
+              presentAddress: passengerData.presentAddress || existingPassenger.presentAddress,
+              permanentAddress: passengerData.permanentAddress || existingPassenger.permanentAddress,
+              status: passengerData.status || existingPassenger.status,
+              rating: passengerData.rating || existingPassenger.rating,
+              updatedAt: Date.now()
+            }
+          },
+          { new: true }
+        );
+
+        logger.info(`Updated passenger with ID: ${updatedPassenger?._id}`);
+        channel.ack(msg);
+        return;
+      }
 
         // Save to MongoDB
         const passenger = new Passenger(passengerData);
