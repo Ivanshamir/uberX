@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { connectDB, connectRedis, connectRabbitMQ } from './config/database';
 import userRoutes from './routes/userRoutes';
 import passengerRide from './routes/passengerRide';
+import rideStatusRoutes from './routes/rideStatusRoutes';
 import logger from './config/logger';
 import { setupPassengerQueue } from './exchange/PassengerEvent';
 import { setupDriverQueue } from './exchange/DriverEvent';
@@ -16,6 +17,7 @@ app.use(express.json());
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/passenger-ride', passengerRide);
+app.use('/api/ride_status', rideStatusRoutes);
 
 // Connect to databases
 const startServer = async () => {
