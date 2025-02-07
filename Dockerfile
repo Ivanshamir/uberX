@@ -16,4 +16,4 @@ COPY src/ ./src/
 COPY .env ./
 
 # Add build and start script
-CMD ["sh", "-c", "pnpm build && node dist/index.js"]
+CMD ["pnpm", "dev"]

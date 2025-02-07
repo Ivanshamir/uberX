@@ -13,6 +13,8 @@ services:
     networks:
       - uber-network
     restart: unless-stopped
+    volumes:
+      - ./src:/app/src
 
 networks:
   uber-network:
