@@ -1,13 +1,8 @@
 import { Request, Response } from 'express';
 import amqp, { Connection, Channel } from 'amqplib/callback_api';
-// import { UserService } from '../services/UserService';
 
 export class RideStatusController {
-//   private userService: UserService;
-
-  constructor() {
-    // this.userService = new UserService();
-  }
+  constructor() {}
 
   async start(req: Request, res: Response) {
     console.log(req.body);
