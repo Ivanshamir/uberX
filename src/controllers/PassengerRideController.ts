@@ -1,12 +1,8 @@
 import { Request, Response } from "express";
-import { PassengerRideService } from "../services/PassengerRide";
+import { PassengerRideService } from "../services/PassengerRideService";
 
 export class PassengerRideController {
-  private passengerRideService: PassengerRideService;
-
-  constructor() {
-    this.passengerRideService = new PassengerRideService();
-  }
+  constructor(private passengerRideService: PassengerRideService) {}
 
   async confirm(req: Request, res: Response): Promise<void> {
     try {
