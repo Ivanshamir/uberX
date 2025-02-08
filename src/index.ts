@@ -8,6 +8,7 @@ import rideStatusRoutes from './routes/rideStatusRoutes';
 import logger from './config/logger';
 import { setupPassengerQueue } from './exchange/PassengerEvent';
 import { setupDriverQueue } from './exchange/DriverEvent';
+import rideRouter from './routes/RideRoute';
 import { WebSocketService } from './services/WebSocketService';
 import { setupPriceConsumer } from './exchange/FareConsumeEvent';
 import { listenToDriverMatchingResponse } from './exchange/DriverMatchingEvent';
@@ -23,6 +24,7 @@ const wsService = new WebSocketService(server);
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use('/api/ride', rideRouter);
 app.use('/api/passenger-ride', passengerRide);
 app.use('/api/ride_status', rideStatusRoutes);
 
