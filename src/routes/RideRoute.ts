@@ -9,7 +9,7 @@ const riderItiatorService =  new RideInitiatorService();
 
 const createRide: RequestHandler = async (req, res, next) => {
   try {
-    return riderItiatorService.RideRequest(req, res)
+    return rideController.RideRequest(req, res)
   } catch (error) {
     next(error);
   }

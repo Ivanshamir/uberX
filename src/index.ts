@@ -11,6 +11,9 @@ import rideRouter from './routes/RideRoute';
 import { WebSocketService } from './services/WebSocketService';
 import { setupPriceConsumer } from './exchange/FareConsumeEvent';
 import { listenToDriverMatchingResponse } from './exchange/DriverMatchingEvent';
+import { farePublisher } from './exchange/FarePublisher';
+import { locationConsumer } from './exchange/LocationConsumer';
+import { setupRideRequestConsumerQueue } from './exchange/RideRequesConsumer';
 
 dotenv.config();
 
@@ -37,6 +40,9 @@ const startServer = async () => {
     await setupDriverQueue();
     // await setupPriceConsumer(wsService);
     await listenToDriverMatchingResponse();
+    await locationConsumer();
+    await setupRideRequestConsumerQueue();
+    await setupPriceConsumer(wsService);
 
 
     const PORT = process.env.PORT || 3000;
