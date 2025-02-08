@@ -6,19 +6,25 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "compile-ws": "tsc src/scripts/watchWebSocket.ts --outDir dist/scripts",
+    "watch-ws": "node dist/scripts/watchWebSocket.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/ws": "^8.5.14",
     "amqplib": "^0.10.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "express-async-handler": "^1.2.0",
     "mongoose": "^8.9.5",
     "redis": "^4.7.0",
     "uuid": "^11.0.5",
     "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.6",
