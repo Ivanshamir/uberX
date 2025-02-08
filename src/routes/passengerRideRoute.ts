@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { PassengerRideController } from "../controllers/PassengerRide";
 import asyncHandler from "express-async-handler";
+import container from "../di-container";
+import { PassengerRideController } from "../controllers/PassengerRideController";
 
 const router = Router();
-const passengerRideController = new PassengerRideController();
+const passengerRideController = container.resolve(PassengerRideController);
 
 router.post(
   "/confirm",

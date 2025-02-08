@@ -21,6 +21,7 @@
     "express-async-handler": "^1.2.0",
     "mongoose": "^8.9.5",
     "redis": "^4.7.0",
+    "tsyringe": "^4.8.0",
     "uuid": "^11.0.5",
     "winston": "^3.17.0",
     "ws": "^8.18.0"
