@@ -12,8 +12,6 @@ services:
       # - RABBITMQ_URI=amqp://rabbitmq:5672
     networks:
       - uber-network
-    volumes:
-      - ./src:/app/src
     restart: unless-stopped
     volumes:
       - ./src:/app/src
