@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { createServer } from 'http';
 import { connectDB, connectRedis, connectRabbitMQ } from './config/database';
-import passengerRide from './routes/passengerRide';
+import passengerRideRoutes from './routes/passengerRideRoute';
 import rideStatusRoutes from './routes/rideStatusRoutes';
 import logger from './config/logger';
 import { setupPassengerQueue } from './exchange/PassengerEvent';
@@ -23,7 +23,7 @@ const wsService = new WebSocketService(server);
 
 // Routes
 app.use('/api/ride', rideRouter);
-app.use('/api/passenger-ride', passengerRide);
+app.use('/api/passenger-ride', passengerRideRoutes);
 app.use('/api/ride_status', rideStatusRoutes);
 
 // Connect to databases

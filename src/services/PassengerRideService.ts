@@ -1,8 +1,10 @@
 import { PassengerRideConfirmation } from "../dto/PassengerRideConfirmation";
 import { DriverMatchingRequestEvent } from "../dto/DriverMatchingRequest";
-import { publishDriverMatchingRequestEvent } from "../exchange/DriverMatchingEvent";
+import { IQueueService } from "./interfaces/IQueueService"; // Import the generic interface
 
 export class PassengerRideService {
+  constructor(private queueService: IQueueService) {}
+
   async confirm(
     rideConfirmation: PassengerRideConfirmation
   ): Promise<{ message: string }> {
@@ -30,8 +32,9 @@ export class PassengerRideService {
         expectedFare,
       };
 
-      // Publish the driver matching request event
-      publishDriverMatchingRequestEvent(driverMatchingRequestEvent);
+      // Publish the driver matching request event using the queue service
+      const exchange = process.env.DRIVER_MATCHING_REQUEST_EXCHANGE!;
+      await this.queueService.publish(exchange, driverMatchingRequestEvent);
 
       return { message: "Ride confirmed successfully" };
     } catch (error) {
